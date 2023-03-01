@@ -17,13 +17,13 @@ Informix native node.js driver is a high performance driver with asynchronous/sy
 |   V12.X           | YES               | YES               | NO                | YES                |
 |   V13.X           | YES               | YES               | NO                | YES                |
 |   V14.X           | YES               | YES               | NO                | YES                |
-| > V14.X           | FUTURE            | FUTURE            | FUTURE            | FUTURE             |
+| V18.X           | NO            | YES            | NO            | NO             |
 
-**The latest node.js version using which informixdb is tested: 14.17.5**
+**The latest node.js version using which informixdb is tested: 18.14.2**
 
 ## Prerequisite
 
-- Python 2.7 is required by node-gyp.
+- Python v3.7, v3.8, v3.9, or v3.10 is required by node-gyp.
 
 - Informix ODBC (It will get download automatically while installation, if CSDK_HOME/INFORMIXDIR is not set.)
 
@@ -78,30 +78,24 @@ Informix native node.js driver is a high performance driver with asynchronous/sy
 You may install the package using npm install command:
 
 ```
-npm install informixdb
+npm install @etisoftware/informixdb
 ```
 
-or, you can install the latest driver from Github (Not recommanded for production use):
-
-```
-npm install git+https://github.com/OpenInformix/node-informixdb.git
-```
-
-> [For more installation details please refer:  INSTALLATION GUIDE](https://github.com/OpenInformix/node-informixdb/blob/master/INSTALL.md)
+> [For more installation details please refer:  INSTALLATION GUIDE](https://github.com/ETI-Software-Solutions/informixdb/blob/master/INSTALL.md)
 
 ## API Documentation
 
-> [For complete list of informixdb APIs and example, please check API DOCUMENTATION](https://github.com/OpenInformix/node-informixdb/blob/master/APIDocumentation.md)
+> [For complete list of informixdb APIs and example, please check API DOCUMENTATION](https://github.com/ETI-Software-Solutions/informixdb/blob/master/APIDocumentation.md)
 
 ## Quick Example
 
 ```javascript
-var informix = require('informixdb');
+var informix = require('@etisoftware/informixdb');
 
 informix.open("SERVER=dbServerName;DATABASE=dbName;HOST=hostName;SERVICE=port;UID=userID;PWD=password;", function (err,conn) {
   if (err) return console.log(err);
   
-  conn.query('select 1 from table(set{1})', function (err, data) {
+  conn.query('select * from subscribers', function (err, data) {
     if (err) console.log(err);
     else console.log(data);
 
@@ -118,7 +112,7 @@ The simple api is based on the instances of `Database` class. You may get an
 instance by one of the following ways:
 
 ```javascript
-require("informixdb").open(connectionString, function (err, conn){
+require("@etisoftware/informixdb").open(connectionString, function (err, conn){
   //conn is already open now if err is falsy
 });
 ```
@@ -126,13 +120,13 @@ require("informixdb").open(connectionString, function (err, conn){
 or by using the helper function:
 
 ```javascript
-var informix = require("informixdb")();
+var informix = require("@etisoftware/informixdb")();
 ``` 
 
 or by creating an instance with the constructor function:
 
 ```javascript
-var Database = require("informixdb").Database
+var Database = require("@etisoftware/informixdb").Database
   , informix = new Database();
 ```
 
@@ -152,12 +146,12 @@ flag `DEBUG` to the defines section of the `binding.gyp` file and then execute
 
 ## Un-Install
 
-To uninstall informixdb from your system, just delete the node-informixdb or informixdb directory.
+To uninstall informixdb from your system, just delete the informixdb directory.
 
 
 ## For AIX install issue
 
-If `npm install informixdb` aborts with "Out Of Memory" error on AIX, first run `ulimit -d unlimited` and then `npm install informixdb`.
+If `npm install @etisoftware/informixdb` aborts with "Out Of Memory" error on AIX, first run `ulimit -d unlimited` and then `npm install @etisoftware/informixdb`.
 
 
 ## Need Help?
@@ -180,7 +174,7 @@ If no solution found, you can open a new issue on GitHub.
 
 ## Contributing to the informixdb
 
-[Contribution Guidelines](https://github.com/OpenInformix/node-informixdb/blob/master/Contribution.md)
+[Contribution Guidelines](https://github.com/ETI-Software-Solutions/informixdb/blob/master/Contribution.md)
 
 ```
 Contributor should add a reference to the DC sign-off as comment in the pull request(example below):

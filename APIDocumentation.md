@@ -54,7 +54,7 @@ Open a connection to a database.
 * **callback** - `callback (err, conn)`
 
 ```javascript
-var informix = require("informixdb")
+var informix = require("@etisoftware/informixdb")
   , connStr = "SERVER=dbServerName;DATABASE=dbName;HOST=hostName;SERVICE=port;UID=userID;PWD=password;";
 
 informix.open(connStr, function (err, connection) {
@@ -96,7 +96,7 @@ Synchronously open a connection to a database.
     to pass connectTimeout value and systemNaming value for i5/OS server.
 
 ```javascript
-var informix = require("informixdb"),
+var informix = require("@etisoftware/informixdb"),
 	connStr = "SERVER=dbServerName;DATABASE=dbName;HOST=hostName;SERVICE=port;UID=userID;PWD=password;";
 
 try {
@@ -128,7 +128,7 @@ If true - query() will not return any result. "sql" field is mandatory in Object
 * **callback** - `callback (err, rows, sqlca)`
 
 ```javascript
-var informix = require("informixdb")
+var informix = require("@etisoftware/informixdb")
 	, connStr = "SERVER=dbServerName;DATABASE=dbName;HOST=hostName;SERVICE=port;UID=userID;PWD=password;"
 	;
 
@@ -158,7 +158,7 @@ If true - query() will not return any result. If noResults is true for CALL stat
     any '?' characters in `sqlQuery`.
 
 ```javascript
-var informix = require("informixdb")
+var informix = require("@etisoftware/informixdb")
   , connStr = "SERVER=dbServerName;DATABASE=dbName;HOST=hostName;SERVICE=port;UID=userID;PWD=password;";
 
 informix.open(connStr, function (err, conn) {
@@ -182,7 +182,7 @@ and take action.
     any '?' characters in `sqlQuery`.
 
 ```javascript
-var informix = require("informixdb")
+var informix = require("@etisoftware/informixdb")
   , connStr = "SERVER=dbServerName;DATABASE=dbName;HOST=hostName;SERVICE=port;UID=userID;PWD=password;";
 
 informix.open(connStr, function (err, conn) {
@@ -215,7 +215,7 @@ noResults accepts only true or false values. If true - queryResult() will not re
 outparams is returned only for CALL statement with OUT parameters. Any resultset expected from SP should get retrieved using result.fetch apis.
 
 ```javascript
-var informix = require("informixdb")
+var informix = require("@etisoftware/informixdb")
 	, connStr = "SERVER=dbServerName;DATABASE=dbName;HOST=hostName;SERVICE=port;UID=userID;PWD=password;";
 
 informix.open(connStr, function (err, conn) {
@@ -247,7 +247,7 @@ Synchronously issue a SQL query to the database that is currently open and retur
     any '?' characters in `sqlQuery`.
 
 ```javascript
-var informix = require("informixdb")
+var informix = require("@etisoftware/informixdb")
   , connStr = "SERVER=dbServerName;DATABASE=dbName;HOST=hostName;SERVICE=port;UID=userID;PWD=password;";
 
 informix.open(connStr, function (err, conn) {
@@ -272,7 +272,7 @@ Close the currently opened database.
 * **callback** - `callback (err)`
 
 ```javascript
-var informix = require("informixdb")
+var informix = require("@etisoftware/informixdb")
   , connStr = "SERVER=dbServerName;DATABASE=dbName;HOST=hostName;SERVICE=port;UID=userID;PWD=password;";
 
 informix.open(connStr, function (err, conn) {
@@ -291,7 +291,7 @@ informix.open(connStr, function (err, conn) {
 Synchronously close the currently opened database.
 
 ```javascript
-var informix = require("informixdb")()
+var informix = require("@etisoftware/informixdb")()
   , connStr = "SERVER=dbServerName;DATABASE=dbName;HOST=hostName;SERVICE=port;UID=userID;PWD=password;";
 
 //Blocks until the connection is open
@@ -311,7 +311,7 @@ Prepare a statement for execution.
 Returns a `Statement` object via the callback
 
 ```javascript
-var informix = require("informixdb")
+var informix = require("@etisoftware/informixdb")
   , connStr = "SERVER=dbServerName;DATABASE=dbName;HOST=hostName;SERVICE=port;UID=userID;PWD=password;";
 
 informix.open(connStr, function (err, conn) {
@@ -345,7 +345,7 @@ Synchronously prepare a statement for execution.
 Returns a `Statement` object
 
 ```javascript
-var informix = require("informixdb")
+var informix = require("@etisoftware/informixdb")
   , connStr = "SERVER=dbServerName;DATABASE=dbName;HOST=hostName;SERVICE=port;UID=userID;PWD=password;";
 
 informix.open(connStr, function (err, conn) {
@@ -388,7 +388,7 @@ outparams - will have result for INOUT and OUTPUT parameters of Stored Procedure
 Returns a `Statement` object via the callback
 
 ```javascript
-var informix = require("informixdb")
+var informix = require("@etisoftware/informixdb")
   , connStr = "SERVER=dbServerName;DATABASE=dbName;HOST=hostName;SERVICE=port;UID=userID;PWD=password;";
 
 informix.open(connStr, function (err, conn) {
@@ -425,7 +425,7 @@ Execute a prepared statement synchronously.
 Returns a `Statement` object. If prepared statement is a stored procedure with INOUT or OUT parameter, executeSync() returns an array of two elements in the form [stmt, outparams]. The first element of such array is an `Statement` object and second element is an `Array` of INOUT and OUTPUT parameters in sequence.
 
 ```javascript
-var informix = require("informixdb")
+var informix = require("@etisoftware/informixdb")
   , connStr = "SERVER=dbServerName;DATABASE=dbName;HOST=hostName;SERVICE=port;UID=userID;PWD=password;";
 
 informix.open(connStr, function (err, conn) {
@@ -453,7 +453,7 @@ Execute a non query prepared statement and returns the number of rows affected i
 It returns the number of rows in a table that were affected by an UPDATE, an INSERT, a DELETE, or a MERGE statement issued against the table, or a view based on the table. If no rows are affected, it returns -1 via the callback function.
 
 ```javascript
-var informix = require("informixdb")
+var informix = require("@etisoftware/informixdb")
   , connStr = "SERVER=dbServerName;DATABASE=dbName;HOST=hostName;SERVICE=port;UID=userID;PWD=password;";
 
 informix.open(connStr, function (err, conn) {
@@ -486,7 +486,7 @@ Fetch a row of data from ODBCResult object asynchronously.
 * **callback** - `callback (err, row)`
 
 ```javascript
-var informix = require("informixdb")
+var informix = require("@etisoftware/informixdb")
   , connStr = "SERVER=dbServerName;DATABASE=dbName;HOST=hostName;SERVICE=port;UID=userID;PWD=password;";
 
 informix.open(connStr, function (err, conn) {
@@ -528,7 +528,7 @@ Fetch a row of data from ODBCResult object synchronously.
     * fetchMode - Format of returned row data. By default row data get returned in object form. option = {fetchMode:3} will return row in array form.
 
 ```javascript
-var informix = require("informixdb")
+var informix = require("@etisoftware/informixdb")
   , connStr = "SERVER=dbServerName;DATABASE=dbName;HOST=hostName;SERVICE=port;UID=userID;PWD=password;";
 
 informix.open(connStr, function (err, conn) {
@@ -557,7 +557,7 @@ Fetch all rows from ODBCResult object asynchronously for the executed statement.
 * **callback** - `callback (err, data, noOfColumns)`
 
 ```javascript
-var informix = require("informixdb")
+var informix = require("@etisoftware/informixdb")
   , connStr = "SERVER=dbServerName;DATABASE=dbName;HOST=hostName;SERVICE=port;UID=userID;PWD=password;";
 
 
@@ -597,7 +597,7 @@ Fetch all rows from ODBCResult object Synchronously for the executed statement.
 * **option** - Optional object to specify return type of data. By default row data get returned in object form. option = {fetchMode:3} will return row in array form.
 
 ```javascript
-var informix = require("informixdb")
+var informix = require("@etisoftware/informixdb")
   , connStr = "SERVER=dbServerName;DATABASE=dbName;HOST=hostName;SERVICE=port;UID=userID;PWD=password;";
 
 informix.open(connStr, function (err, conn) {
@@ -613,7 +613,7 @@ informix.open(connStr, function (err, conn) {
   conn.closeSync();
 });
 ```
-For example of prepare once and execute many times with above fetch APIs, please see test file [test-fetch-apis.js](https://github.com/OpenInformix/node-informixdb/blob/master/test/test-fetch-apis.js).
+For example of prepare once and execute many times with above fetch APIs, please see test file [test-fetch-apis.js](https://github.com/ETI-Software-Solutions/informixdb/blob/master/test/test-fetch-apis.js).
 
 ### <a name="beginTransactionApi"></a> 21) .beginTransaction(callback)
 
@@ -632,7 +632,7 @@ Commit a transaction
 * **callback** - `callback (err)`
 
 ```javascript
-var informix = require("informixdb")
+var informix = require("@etisoftware/informixdb")
   , connStr = "SERVER=dbServerName;DATABASE=dbName;HOST=hostName;SERVICE=port;UID=userID;PWD=password;";
 
 informix.open(connStr, function (err, conn) {
@@ -667,7 +667,7 @@ informix.open(connStr, function (err, conn) {
 Synchronously commit a transaction
 
 ```javascript
-var informix = require("informixdb")
+var informix = require("@etisoftware/informixdb")
   , connStr = "SERVER=dbServerName;DATABASE=dbName;HOST=hostName;SERVICE=port;UID=userID;PWD=password;";
 
 informix.open(connStr, function (err, conn) {
@@ -698,7 +698,7 @@ Rollback a transaction
 * **callback** - `callback (err)`
 
 ```javascript
-var informix = require("informixdb")
+var informix = require("@etisoftware/informixdb")
   , connStr = "SERVER=dbServerName;DATABASE=dbName;HOST=hostName;SERVICE=port;UID=userID;PWD=password;";
 
 informix.open(connStr, function (err, conn) {
@@ -734,7 +734,7 @@ informix.open(connStr, function (err, conn) {
 Synchronously rollback a transaction
 
 ```javascript
-var informix = require("informixdb")
+var informix = require("@etisoftware/informixdb")
   , connStr = "SERVER=dbServerName;DATABASE=dbName;HOST=hostName;SERVICE=port;UID=userID;PWD=password;";
 
 informix.open(connStr, function (err, conn) {
@@ -784,7 +784,7 @@ Enable console logs.
 * **value** - true/false.
 
 ```javascript
-var informix = require("informixdb")
+var informix = require("@etisoftware/informixdb")
   , connStr = "SERVER=dbServerName;DATABASE=dbName;HOST=hostName;SERVICE=port;UID=userID;PWD=password;";
 
 informix.debug(true);  // **==> ENABLE CONSOLE LOGS. <==**
@@ -820,7 +820,7 @@ To create a database (dbName) through Node.js application.
     * mode    - Database logging mode (applicable only to "IDS data servers").
 
 ```javascript
-var informix = require("informixdb");
+var informix = require("@etisoftware/informixdb");
 // Connection string without "DATABASE" keyword and value.
 var connStr = "SERVER=dbServerName;HOST=hostName;SERVICE=port;UID=userID;PWD=password;";
 
@@ -848,7 +848,7 @@ To drop a database (dbName) through node.js application.
 * **connectionString** - The connection string for your database instance.
 
 ```javascript
-var informix = require("informixdb");
+var informix = require("@etisoftware/informixdb");
 // Connection string without "DATABASE" keyword and value.
 var connStr = "SERVER=dbServerName;HOST=hostName;SERVICE=port;UID=userID;PWD=password;";
 
@@ -863,7 +863,7 @@ if (dropDB) {
 
 ## <a name="PoolAPIs"></a>Connection Pooling APIs
 
-node-informixdb reuses node-odbc pool.
+informixdb reuses node-odbc pool.
 The node-odbc `Pool` is a rudimentary connection pool which will attempt to have
 database connections ready and waiting for you when you call the `open` method.
 
@@ -887,7 +887,7 @@ Get a `Database` instance which is already connected to `connectionString`
 * **callback** - `callback (err, db)`
 
 ```javascript
-var Pool = require("./informixdb").Pool
+var Pool = require("@etisoftware/informixdb").Pool
   , pool = new Pool()
   , connStr = "SERVER=dbServerName;DATABASE=dbName;HOST=hostName;SERVICE=port;UID=userID;PWD=password;";
 
@@ -910,7 +910,7 @@ Close all connections in the `Pool` instance
 * **callback** - `callback (err)`
 
 ```javascript
-var Pool = require("informixdb").Pool
+var Pool = require("@etisoftware/informixdb").Pool
 	, pool = new Pool()4
   , connStr = "SERVER=dbServerName;DATABASE=dbName;HOST=hostName;SERVICE=port;UID=userID;PWD=password;";
 
@@ -998,8 +998,8 @@ The values in array parameters used in above example is not recommened to use as
 
 Pass bind parameters as Object if you want to insert a BLOB or CLOB data to Informix. Check below test files to know how to insert a BLOB and CLOB data from buffer and file:
 
- - [test-blob-insert.js](https://github.com/OpenInformix/node-informixdb/blob/master/test/test-blob-insert.js) - To insert a BLOB and CLOB data using memory buffer. Application need to read the file contents and then use as bind parameter.
- - [test-blob-file.js](https://github.com/OpenInformix/node-informixdb/blob/master/test/test-blob-file.js) - To insert an image file and large text file directly to database without reading it by application.
+ - [test-blob-insert.js](https://github.com/ETI-Software-Solutions/informixdb/blob/master/test/test-blob-insert.js) - To insert a BLOB and CLOB data using memory buffer. Application need to read the file contents and then use as bind parameter.
+ - [test-blob-file.js](https://github.com/ETI-Software-Solutions/informixdb/blob/master/test/test-blob-file.js) - To insert an image file and large text file directly to database without reading it by application.
 
 ## <a name="callStmt"></a>CALL Statement
 
@@ -1010,11 +1010,11 @@ parmeter markers only. i.e. pass the input values using bind params.
 
 * If SP has result set to return, it will be returned in the array after out params. f.e. if SP has 2 out params and it returns 2 result set too, the result returned by query() or querySync() would be in the form [outValue1, outValue2, resultSet1, resultSet2]. Each resultset would be an array of row objects.
 
-* [test-call-stmt.js](https://github.com/OpenInformix/node-informixdb/blob/master/test/test-call-stmt.js) - Example using conn.querySync().
+* [test-call-stmt.js](https://github.com/ETI-Software-Solutions/informixdb/blob/master/test/test-call-stmt.js) - Example using conn.querySync().
 
-* [test-call-async.js](https://github.com/OpenInformix/node-informixdb/blob/master/test/test-call-async.js) - Example using conn.query().
+* [test-call-async.js](https://github.com/ETI-Software-Solutions/informixdb/blob/master/test/test-call-async.js) - Example using conn.query().
 
-* [test-sp-resultset.js](https://github.com/OpenInformix/node-informixdb/blob/master/test/test-sp-resultset.js) - Example using Out Params and Result Set using query() and querySync() APIs.
+* [test-sp-resultset.js](https://github.com/ETI-Software-Solutions/informixdb/blob/master/test/test-sp-resultset.js) - Example using Out Params and Result Set using query() and querySync() APIs.
 
-* [test-sp-resultset-execute.js](https://github.com/OpenInformix/node-informixdb/blob/master/test/test-sp-resultset-execute.js) - Example using Out Params and Result Set using prepare() and execute() APIs.
+* [test-sp-resultset-execute.js](https://github.com/ETI-Software-Solutions/informixdb/blob/master/test/test-sp-resultset-execute.js) - Example using Out Params and Result Set using prepare() and execute() APIs.
 

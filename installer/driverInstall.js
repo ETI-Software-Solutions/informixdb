@@ -315,7 +315,7 @@ function installPreCompiledBinary() {
     var ODBC_BINDINGS = 'build\/Release\/odbc_bindings.node';
 
     // Supported Node.js versions bonaries
-    var ODBC_BINDINGS_V10, ODBC_BINDINGS_V11, ODBC_BINDINGS_V12, ODBC_BINDINGS_V13, ODBC_BINDINGS_V14
+    var ODBC_BINDINGS_V10, ODBC_BINDINGS_V11, ODBC_BINDINGS_V12, ODBC_BINDINGS_V13, ODBC_BINDINGS_V14, ODBC_BINDINGS_V18
 
     if (platform == 'win32' && arch == 'x64') {
         // Windows node binary names should update here.
@@ -324,6 +324,7 @@ function installPreCompiledBinary() {
         ODBC_BINDINGS_V12 = 'build\/Release\/odbc_bindings_win64.node.12.22.5';
         ODBC_BINDINGS_V13 = 'build\/Release\/odbc_bindings_win64.node.13.14.0';
         ODBC_BINDINGS_V14 = 'build\/Release\/odbc_bindings_win64.node.14.17.5';
+        ODBC_BINDINGS_V18 = 'build\/Release\/odbc_bindings_win64.node.18.14.2';
     }
     else if (platform = 'linux') {
         // Linux node binary names should update here.
@@ -332,6 +333,7 @@ function installPreCompiledBinary() {
         ODBC_BINDINGS_V12 = 'build\/Release\/odbc_bindings_linux.node.12.22.5';
         ODBC_BINDINGS_V13 = 'build\/Release\/odbc_bindings_linux.node.13.14.0';
         ODBC_BINDINGS_V14 = 'build\/Release\/odbc_bindings_linux.node.14.17.5';
+        ODBC_BINDINGS_V18 = 'build\/Release\/odbc_bindings_linux.node.18.14.2';
     }
 
     /*
@@ -341,7 +343,8 @@ function installPreCompiledBinary() {
     var odbcBindingsNode = (Number(process.version.match(/^v(\d+\.\d+)/)[1]) < 11.0) && ODBC_BINDINGS_V10 ||
                            (Number(process.version.match(/^v(\d+\.\d+)/)[1]) < 12.0) && ODBC_BINDINGS_V11 ||
                            (Number(process.version.match(/^v(\d+\.\d+)/)[1]) < 13.0) && ODBC_BINDINGS_V12 ||
-                           (Number(process.version.match(/^v(\d+\.\d+)/)[1]) < 14.0) && ODBC_BINDINGS_V13 || ODBC_BINDINGS_V14;
+                           (Number(process.version.match(/^v(\d+\.\d+)/)[1]) < 14.0) && ODBC_BINDINGS_V13 || 
+                           (Number(process.version.match(/^v(\d+\.\d+)/)[1]) < 15.0) && ODBC_BINDINGS_V14 || ODBC_BINDINGS_V18;
 
     // Removing the "build" directory created by Auto Installation Process.
     // "unzipper" will create a fresh "build" directory for extraction of "build.zip".

@@ -1,15 +1,15 @@
 {
-  "name": "informixdb",
+  "name": "@etisoftware/informixdb",
   "description": "Informix native node.js driver",
   "version": "2.2.1",
   "main": "lib/odbc.js",
-  "homepage": "https://github.com/OpenInformix/node-informixdb",
+  "homepage": "https://github.com/ETI-Software-Solutions/informixdb",
   "repository": {
     "type": "git",
-    "url": "git://https://github.com/OpenInformix/node-informixdb.git"
+    "url": "git://https://github.com/ETI-Software-Solutions/informixdb.git"
   },
   "bugs": {
-    "url": "https://github.com/OpenInformix/node-informixdb/issues"
+    "url": "https://github.com/ETI-Software-Solutions/informixdb/issues"
   },
   "contributors": [
     "OpenInformix",
@@ -30,6 +30,9 @@
   "scripts": {
     "install": "node installer/driverInstall.js",
     "test": "echo \"No test specified\""
+  },
+  "publishConfig": {
+    "registry": "https://docker.etisoftware.com:443/artifactory/npm-local/"
   },
   "dependencies": {
     "bindings": "^1.3.0",
