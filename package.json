@@ -32,7 +32,7 @@
     "test": "echo \"No test specified\""
   },
   "publishConfig": {
-    "registry": "https://docker.etisoftware.com:443/artifactory/npm-local/"
+    "registry": "https://trialsn14pe.jfrog.io:443/artifactory/npm-local/"
   },
   "dependencies": {
     "bindings": "^1.3.0",
