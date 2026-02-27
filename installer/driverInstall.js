@@ -416,7 +416,7 @@ function downloadODBCDriver(installerfileURL) {
 
 function showDownloadingProgress(received, total) {
     var percentage = ((received * 100) / total).toFixed(2);
-    process.stdout.write((platform == 'win32') ? "\033[0G": "\r");
+    process.stdout.write((platform == 'win32') ? "\x1b[0G": "\r");
     process.stdout.write(percentage + "% | " + received + " bytes downloaded out of " + total + " bytes.");
 };
 
