@@ -17,9 +17,9 @@ Informix native node.js driver is a high performance driver with asynchronous/sy
 |   V12.X           | YES               | YES               | NO                | YES                |
 |   V13.X           | YES               | YES               | NO                | YES                |
 |   V14.X           | YES               | YES               | NO                | YES                |
-| V18.X           | NO            | YES            | NO            | NO             |
+|   V18.X           | NO                | YES               | NO                | NO                 |
 
-**The latest node.js version using which informixdb is tested: 18.14.2**
+**The latest node.js version using which informixdb is tested: 18.15.0**
 
 ## Prerequisite
 
@@ -72,6 +72,19 @@ Informix native node.js driver is a high performance driver with asynchronous/sy
 |Linux         |  x64           |OneDB-Linux64-ODBC-Driver.tar.gz  |  Yes         |
 |Windows       |  x64           |OneDB-Win64-ODBC-Driver.zip       |  Yes         |
 
+## Build
+Set IBM Informix Client SDK environment variables
+```sh
+export INFORMIXDIR=/opt/IBM/Informix_Client-SDK
+export LD_LIBRARY_PATH=${INFORMIXDIR}/lib:${INFORMIXDIR}/lib/esql:${INFORMIXDIR}/lib/cli
+export CSDK_HOME=$INFORMIXDIR
+export PATH=$INFORMIXDIR/bin:$PATH
+```
+
+Build the project
+```sh
+node-gyp rebuild
+```
 
 ## Install
 

@@ -324,7 +324,7 @@ function installPreCompiledBinary() {
         ODBC_BINDINGS_V12 = 'build\/Release\/odbc_bindings_win64.node.12.22.5';
         ODBC_BINDINGS_V13 = 'build\/Release\/odbc_bindings_win64.node.13.14.0';
         ODBC_BINDINGS_V14 = 'build\/Release\/odbc_bindings_win64.node.14.17.5';
-        ODBC_BINDINGS_V18 = 'build\/Release\/odbc_bindings_win64.node.18.14.2';
+        ODBC_BINDINGS_V18 = 'build\/Release\/odbc_bindings_win64.node.18.15.0';
     }
     else if (platform = 'linux') {
         // Linux node binary names should update here.
@@ -333,7 +333,7 @@ function installPreCompiledBinary() {
         ODBC_BINDINGS_V12 = 'build\/Release\/odbc_bindings_linux.node.12.22.5';
         ODBC_BINDINGS_V13 = 'build\/Release\/odbc_bindings_linux.node.13.14.0';
         ODBC_BINDINGS_V14 = 'build\/Release\/odbc_bindings_linux.node.14.17.5';
-        ODBC_BINDINGS_V18 = 'build\/Release\/odbc_bindings_linux.node.18.14.2';
+        ODBC_BINDINGS_V18 = 'build\/Release\/odbc_bindings_linux.node.18.15.0';
     }
 
     /*
