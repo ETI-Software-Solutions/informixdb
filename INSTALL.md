@@ -84,7 +84,7 @@ export CSDK_HOME=/home/mysystem/InformixClient-SDK
 
 npm install -g node-gyp
 npm install moment async bluebird
-npm install nan bindings fstream q request targz unzipper
+npm install nan bindings fstream q axios targz unzipper
 etc...
 ```
 
