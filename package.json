@@ -35,13 +35,9 @@
     "registry": "https://trialsn14pe.jfrog.io:443/artifactory/npm-local/"
   },
   "dependencies": {
-    "axios": "^1.13.6",
     "bindings": "^1.5.0",
-    "fstream": "^1.0.12",
     "nan": "^2.25.0",
-    "npm": "^10.9.5",
-    "q": "^1.5.1",
-    "targz": "^1.0.1",
+    "tar": "^7.5.11",
     "unzipper": "^0.8.14"
   },
   "keywords": [

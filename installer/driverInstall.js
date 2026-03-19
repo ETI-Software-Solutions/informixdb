@@ -27,8 +27,9 @@ var path = require('path');
 var exec = require('child_process').exec;
 var execSync = require('child_process').execSync;
 var url = require('url');
-var axios = require('axios');
 var unzipper = require('unzipper');
+var { Readable } = require('stream');
+var tar = require('tar');
 
 var platform = os.platform();
 var CURRENT_DIR = process.cwd();
@@ -40,7 +41,6 @@ var arch = os.arch();
 
 var vscode_build = false;
 var readStream;
-var writeStream;
 
 /*
  * "process.env.CSDK_INSTALLER_URL"
@@ -307,33 +307,32 @@ function installPreCompiledBinary() {
         console.log('\nERROR: Installation Failed! \n');
         process.exit(1);
     }
-    var fstream = require('fstream');
     // build.zip file contains all the pre-compiled binary files
     BUILD_FILE = path.resolve(CURRENT_DIR, 'build.zip');
 
     // This will always be the final installation name/path for all the binaries
-    var ODBC_BINDINGS = 'build\/Release\/odbc_bindings.node';
+    var ODBC_BINDINGS = 'build/Release/odbc_bindings.node';
 
     // Supported Node.js versions bonaries
     var ODBC_BINDINGS_V10, ODBC_BINDINGS_V11, ODBC_BINDINGS_V12, ODBC_BINDINGS_V13, ODBC_BINDINGS_V14, ODBC_BINDINGS_V18
 
     if (platform == 'win32' && arch == 'x64') {
         // Windows node binary names should update here.
-        ODBC_BINDINGS_V10 = 'build\/Release\/odbc_bindings_win64.node.10.24.1';
-        ODBC_BINDINGS_V11 = 'build\/Release\/odbc_bindings_win64.node.11.15.0';
-        ODBC_BINDINGS_V12 = 'build\/Release\/odbc_bindings_win64.node.12.22.5';
-        ODBC_BINDINGS_V13 = 'build\/Release\/odbc_bindings_win64.node.13.14.0';
-        ODBC_BINDINGS_V14 = 'build\/Release\/odbc_bindings_win64.node.14.17.5';
-        ODBC_BINDINGS_V18 = 'build\/Release\/odbc_bindings_win64.node.18.17.0';
+        ODBC_BINDINGS_V10 = 'build/Release/odbc_bindings_win64.node.10.24.1';
+        ODBC_BINDINGS_V11 = 'build/Release/odbc_bindings_win64.node.11.15.0';
+        ODBC_BINDINGS_V12 = 'build/Release/odbc_bindings_win64.node.12.22.5';
+        ODBC_BINDINGS_V13 = 'build/Release/odbc_bindings_win64.node.13.14.0';
+        ODBC_BINDINGS_V14 = 'build/Release/odbc_bindings_win64.node.14.17.5';
+        ODBC_BINDINGS_V18 = 'build/Release/odbc_bindings_win64.node.18.17.0';
     }
     else if (platform = 'linux') {
         // Linux node binary names should update here.
-        ODBC_BINDINGS_V10 = 'build\/Release\/odbc_bindings_linux.node.10.24.1';
-        ODBC_BINDINGS_V11 = 'build\/Release\/odbc_bindings_linux.node.11.15.0';
-        ODBC_BINDINGS_V12 = 'build\/Release\/odbc_bindings_linux.node.12.22.5';
-        ODBC_BINDINGS_V13 = 'build\/Release\/odbc_bindings_linux.node.13.14.0';
-        ODBC_BINDINGS_V14 = 'build\/Release\/odbc_bindings_linux.node.14.17.5';
-        ODBC_BINDINGS_V18 = 'build\/Release\/odbc_bindings_linux.node.18.17.0';
+        ODBC_BINDINGS_V10 = 'build/Release/odbc_bindings_linux.node.10.24.1';
+        ODBC_BINDINGS_V11 = 'build/Release/odbc_bindings_linux.node.11.15.0';
+        ODBC_BINDINGS_V12 = 'build/Release/odbc_bindings_linux.node.12.22.5';
+        ODBC_BINDINGS_V13 = 'build/Release/odbc_bindings_linux.node.13.14.0';
+        ODBC_BINDINGS_V14 = 'build/Release/odbc_bindings_linux.node.14.17.5';
+        ODBC_BINDINGS_V18 = 'build/Release/odbc_bindings_linux.node.18.17.0';
     }
 
     /*
@@ -343,7 +342,7 @@ function installPreCompiledBinary() {
     var odbcBindingsNode = (Number(process.version.match(/^v(\d+\.\d+)/)[1]) < 11.0) && ODBC_BINDINGS_V10 ||
                            (Number(process.version.match(/^v(\d+\.\d+)/)[1]) < 12.0) && ODBC_BINDINGS_V11 ||
                            (Number(process.version.match(/^v(\d+\.\d+)/)[1]) < 13.0) && ODBC_BINDINGS_V12 ||
-                           (Number(process.version.match(/^v(\d+\.\d+)/)[1]) < 14.0) && ODBC_BINDINGS_V13 || 
+                           (Number(process.version.match(/^v(\d+\.\d+)/)[1]) < 14.0) && ODBC_BINDINGS_V13 ||
                            (Number(process.version.match(/^v(\d+\.\d+)/)[1]) < 15.0) && ODBC_BINDINGS_V14 || ODBC_BINDINGS_V18;
 
     // Removing the "build" directory created by Auto Installation Process.
@@ -356,14 +355,15 @@ function installPreCompiledBinary() {
     * unzipper will parse the build.zip file content and
     * then it will check for the odbcBindingsNode
     * (node Binary), when it gets that binary file,
-    * fstream.Writer will write the same node binary
+    * fs.createWriteStream will write the same node binary
     * but the name will be odbc_bindings.node, and the other
     * binary files and build.zip will be discarded.
     */
     readStream.pipe(unzipper.Parse())
         .on('entry', function (entry) {
             if (entry.path === odbcBindingsNode) {
-                entry.pipe(fstream.Writer(ODBC_BINDINGS));
+                fs.mkdirSync(path.dirname(ODBC_BINDINGS), { recursive: true });
+                entry.pipe(fs.createWriteStream(ODBC_BINDINGS));
             } else {
                 entry.autodrain();
             }
@@ -382,37 +382,38 @@ function installPreCompiledBinary() {
 };
 
 // Function to download onedb-odbc-driver file using request module.
-function downloadODBCDriver(installerfileURL) {
+async function downloadODBCDriver(installerfileURL) {
     // Variable to save downloading progress
     let received_bytes = 0;
     let total_bytes = 0;
 
     const outStream = fs.createWriteStream(INSTALLER_FILE);
 
-    axios({
-        method: 'get',
-        url: installerfileURL,
-        responseType: 'stream'
-    })
-    .then(response => {
-        total_bytes = parseInt(response.headers['content-length']);
-        response.data.on('data', function(chunk) {
+    try {
+        const response = await fetch(installerfileURL);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        total_bytes = parseInt(response.headers.get('content-length'), 10);
+        const bodyStream = Readable.fromWeb(response.body);
+
+        bodyStream.on('data', function(chunk) {
             received_bytes += chunk.length;
             showDownloadingProgress(received_bytes, total_bytes);
         })
         .pipe(outStream);
-    })
-    .catch(error => {
+
+        deleteInstallerFile = true;
+        outStream.once('close', copyAndExtractODBCDriver)
+        .once('error', function (err) {
+            console.log('\nERROR: extraction of onedb-odbc-driver failed! \n' + err);
+            installPreCompiledBinary();
+        });
+    } catch (error) {
         console.log('\nERROR: downloading onedb-odbc-driver process failed! \n' + error);
         installPreCompiledBinary();
-    });
-
-    deleteInstallerFile = true;
-    outStream.once('close', copyAndExtractODBCDriver)
-    .once('error', function (err) {
-        console.log('\nERROR: extraction of onedb-odbc-driver failed! \n' + err);
-        installPreCompiledBinary();
-    });
+    }
 };
 
 function showDownloadingProgress(received, total) {
@@ -447,8 +448,7 @@ function copyAndExtractODBCDriver() {
     }
     else
     {
-        var targz = require('targz');
-        var decompress = targz.decompress({src: INSTALLER_FILE, dest: DOWNLOAD_DIR}, function(err){
+        tar.x({file: INSTALLER_FILE, cwd: DOWNLOAD_DIR}, function(err){
             if(err) {
                 console.log('\nERROR: extraction of onedb-odbc-driver failed! \n' + err);
                 installPreCompiledBinary();
@@ -483,25 +483,23 @@ function removeDir(dir) {
 function removeFile(FILE_PATH)
 {
     // Delete downloaded odbc_cli.tar.gz file.
-    fs.exists(FILE_PATH, function(exists)
-    {
-        if (exists)
-        {
+    try {
+        if (fs.existsSync(FILE_PATH)) {
             fs.unlinkSync(FILE_PATH);
         }
-    });
+    } catch (e) {
+        // ignore error if file missing
+    }
 };
 
 function deleteFolderRecursive(p){
     if (fs.existsSync(p)) {
-        fs.readdirSync(p).forEach(function(file, index){
-            var curPath = path.join(p, file);
-            if (fs.lstatSync(curPath).isDirectory()) { // recurse
-                deleteFolderRecursive(curPath);
-            }else { // delete file
-                fs.unlinkSync(curPath);
-            }
-        });
-        fs.rmdirSync(p);
+        // Node.js 14.14.0+ supports fs.rmSync with recursive option
+        if (fs.rmSync) {
+            fs.rmSync(p, { recursive: true, force: true });
+        } else {
+            // Fallback for older nodes if strictly necessary, but 18 is target
+            fs.rmdirSync(p, { recursive: true });
+        }
     }
 };

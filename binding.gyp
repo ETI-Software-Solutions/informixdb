@@ -19,11 +19,6 @@
         'ODBC64'
       ],
 
-      "variables" : {
-        # Set the linker location
-        "ORIGIN_LIB_PATH%" : "$(CSDK_HOME)/lib/cli",
-      },
-
       'conditions' : [
         ############### Linux 32bit #################
         [ '(OS == "linux" and target_arch =="ia32")',
@@ -31,12 +26,12 @@
             'conditions' : [],
             'libraries' : 
             [ 
-              '-L$(CSDK_HOME)/lib/cli',
+              '-L<!@(echo $CSDK_HOME)/lib/cli',
               '-lthcli'
             ],
             'include_dirs' : 
             [
-              '$(CSDK_HOME)/incl/cli'
+              '<!@(echo $CSDK_HOME)/incl/cli'
             ],
             'cflags' : ['-g'],
           }
@@ -48,12 +43,12 @@
             'conditions' : [],
             'libraries' :
             [
-              '-L$(CSDK_HOME)/lib/cli ',
+              '-L<!@(echo $CSDK_HOME)/lib/cli',
               '-lthcli'
             ],
             'include_dirs' :
             [
-              '$(CSDK_HOME)/incl/cli'
+              '<!@(echo $CSDK_HOME)/incl/cli'
             ],
             'cflags' : ['-g'],
           }
@@ -65,14 +60,14 @@
             'conditions' : [],    
             'libraries' :
             [
-              '-L$(CSDK_HOME)/lib/cli ',
+              '-L<!@(echo $CSDK_HOME)/lib/cli',
               '-lthcli' 
             ],
             'include_dirs' :
             [
-              '$(CSDK_HOME)/incl/cli'
+              '<!@(echo $CSDK_HOME)/incl/cli'
             ],
-            'cflags' : ['-g -m64'],
+            'cflags' : ['-g', '-m64'],
           }
         ],
 
@@ -81,12 +76,12 @@
           { 'xcode_settings' : {'GCC_ENABLE_CPP_EXCEPTIONS': 'YES' },
             'libraries' :
             [
-              '-L$(CSDK_HOME)/lib/cli',
+              '-L<!@(echo $CSDK_HOME)/lib/cli',
               '-lthcli'
             ],
             'include_dirs' :
             [
-              '$(CSDK_HOME)/incl/cli'
+              '<!@(echo $CSDK_HOME)/incl/cli'
             ],
             'cflags' : ['-g']
           }
@@ -97,12 +92,11 @@
           { 'sources' : ['src/strptime.c', 'src/odbc.cpp'],
             'libraries' :
             [
-              '$(CSDK_HOME)/lib/iclit09b.lib'
+              '<!@(echo $CSDK_HOME)/lib/iclit09b.lib'
             ],
             'include_dirs' :
             [
-              '$(CSDK_HOME)/incl/cli',
-              '$(NODE_SRC)/test/gc/node_modules/nan'
+              '<!@(echo $CSDK_HOME)/incl/cli'
             ]
           }
         ],
@@ -112,12 +106,11 @@
           { 'sources' : ['src/strptime.c', 'src/odbc.cpp'],
             'libraries' :
             [
-              '$(CSDK_HOME)/lib/iclit09b.lib'
+              '<!@(echo $CSDK_HOME)/lib/iclit09b.lib'
             ],
             'include_dirs' :
             [
-              '$(CSDK_HOME)/incl/cli',
-              '$(NODE_SRC)/test/gc/node_modules/nan'
+              '<!@(echo $CSDK_HOME)/incl/cli'
             ]
           }
         ],
@@ -127,12 +120,12 @@
           { 'conditions' : [],
             'libraries' :
             [
-              '-L$(CSDK_HOME)/lib/cli',
+              '-L<!@(echo $CSDK_HOME)/lib/cli',
               '-lthcli'
             ],
             'include_dirs' :
             [
-              '$(CSDK_HOME)/incl/cli'
+              '<!@(echo $CSDK_HOME)/incl/cli'
             ],
             'cflags' : ['-g']
           }
@@ -143,12 +136,12 @@
           { 'conditions' : [],    
             'libraries' :
             [
-              '-L$(CSDK_HOME)/lib/cli',
+              '-L<!@(echo $CSDK_HOME)/lib/cli',
               '-lthcli'
             ],
             'include_dirs' :
             [
-              '$(CSDK_HOME)/incl/cli'
+              '<!@(echo $CSDK_HOME)/incl/cli'
             ],
             'cflags' : ['-g']
           }
