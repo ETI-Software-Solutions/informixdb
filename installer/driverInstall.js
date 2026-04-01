@@ -26,7 +26,6 @@ var os = require('os');
 var path = require('path');
 var exec = require('child_process').exec;
 var execSync = require('child_process').execSync;
-var url = require('url');
 var unzipper = require('unzipper');
 var { Readable } = require('stream');
 var tar = require('tar');
@@ -196,7 +195,7 @@ function InstallNodeInformixDB() {
             process.exit(1);
         }
 
-        var file_name = url.parse(installerfileURL).pathname.split('/').pop();
+        const file_name = new URL(installerfileURL).pathname.split('/').pop();
         INSTALLER_FILE = path.resolve(DOWNLOAD_DIR, file_name);
 
         console.log('Downloading Informix ODBC CLI Driver from ' +
@@ -314,7 +313,8 @@ function installPreCompiledBinary() {
     var ODBC_BINDINGS = 'build/Release/odbc_bindings.node';
 
     // Supported Node.js versions bonaries
-    var ODBC_BINDINGS_V10, ODBC_BINDINGS_V11, ODBC_BINDINGS_V12, ODBC_BINDINGS_V13, ODBC_BINDINGS_V14, ODBC_BINDINGS_V18
+    var ODBC_BINDINGS_V10, ODBC_BINDINGS_V11, ODBC_BINDINGS_V12, 
+        ODBC_BINDINGS_V13, ODBC_BINDINGS_V14, ODBC_BINDINGS_V18, ODBC_BINDINGS_V24
 
     if (platform == 'win32' && arch == 'x64') {
         // Windows node binary names should update here.
@@ -324,6 +324,7 @@ function installPreCompiledBinary() {
         ODBC_BINDINGS_V13 = 'build/Release/odbc_bindings_win64.node.13.14.0';
         ODBC_BINDINGS_V14 = 'build/Release/odbc_bindings_win64.node.14.17.5';
         ODBC_BINDINGS_V18 = 'build/Release/odbc_bindings_win64.node.18.17.0';
+        ODBC_BINDINGS_V24 = 'build/Release/odbc_bindings_win64.node.24.14.1';
     }
     else if (platform = 'linux') {
         // Linux node binary names should update here.
@@ -333,6 +334,7 @@ function installPreCompiledBinary() {
         ODBC_BINDINGS_V13 = 'build/Release/odbc_bindings_linux.node.13.14.0';
         ODBC_BINDINGS_V14 = 'build/Release/odbc_bindings_linux.node.14.17.5';
         ODBC_BINDINGS_V18 = 'build/Release/odbc_bindings_linux.node.18.17.0';
+        ODBC_BINDINGS_V24 = 'build/Release/odbc_bindings_linux.node.24.14.1';
     }
 
     /*
@@ -343,7 +345,8 @@ function installPreCompiledBinary() {
                            (Number(process.version.match(/^v(\d+\.\d+)/)[1]) < 12.0) && ODBC_BINDINGS_V11 ||
                            (Number(process.version.match(/^v(\d+\.\d+)/)[1]) < 13.0) && ODBC_BINDINGS_V12 ||
                            (Number(process.version.match(/^v(\d+\.\d+)/)[1]) < 14.0) && ODBC_BINDINGS_V13 ||
-                           (Number(process.version.match(/^v(\d+\.\d+)/)[1]) < 15.0) && ODBC_BINDINGS_V14 || ODBC_BINDINGS_V18;
+                           (Number(process.version.match(/^v(\d+\.\d+)/)[1]) < 15.0) && ODBC_BINDINGS_V14 ||
+                           (Number(process.version.match(/^v(\d+\.\d+)/)[1]) < 19.0) && ODBC_BINDINGS_V18 || ODBC_BINDINGS_V24;
 
     // Removing the "build" directory created by Auto Installation Process.
     // "unzipper" will create a fresh "build" directory for extraction of "build.zip".
