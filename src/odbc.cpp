@@ -196,7 +196,7 @@ void ODBC::UV_AfterCreateConnection(uv_work_t* req, int status) {
     
     info[0] = ODBC::GetSQLError(SQL_HANDLE_ENV, data->dbo->m_hEnv);
     
-    data->cb->Call(1, info);
+    data->cb->Call(Nan::GetCurrentContext()->Global(), 1, info);
   }
   else {
     Local<Value> info[2];
@@ -208,7 +208,7 @@ void ODBC::UV_AfterCreateConnection(uv_work_t* req, int status) {
     info[0] = Nan::Null();
     info[1] = js_result;
 
-    data->cb->Call(2, info);
+    data->cb->Call(Nan::GetCurrentContext()->Global(), 2, info);
   }
   
   if (try_catch.HasCaught()) {
@@ -513,12 +513,15 @@ Local<Value> ODBC::GetColumnValue( SQLHSTMT hStmt, Column column,
     case SQL_NUMERIC :
         if((int) column.type == SQL_NUMERIC)
           DEBUG_PRINTF("NUMERIC DATA SELECTED\n");
+        [[fallthrough]];
     case SQL_DECIMAL :
         if((int) column.type == SQL_DECIMAL)
           DEBUG_PRINTF("DECIMAL DATA SELECTED\n");
+        [[fallthrough]];
     case SQL_BIGINT :
         if((int) column.type == SQL_BIGINT)
           DEBUG_PRINTF("BIGINT DATA SELECTED\n");
+        [[fallthrough]];
     default :
       uint16_t * tmp_out_ptr = NULL;
       int newbufflen = 0;
@@ -603,7 +606,7 @@ Local<Value> ODBC::GetColumnValue( SQLHSTMT hStmt, Column column,
         //inconsisant state.
         if(ret == SQL_INVALID_HANDLE)
         {
-          fprintf(stdout, "Invalid Handle: SQLGetData retrun code = %i, stmt handle = %i:%i"
+          fprintf(stdout, "Invalid Handle: SQLGetData retrun code = %i, stmt handle = %p:%p"
                   ", columnType = %i, index = %i\n", ret, hStmt, 
                   hStmt, (int) column.type, column.index);
           assert(ret != SQL_INVALID_HANDLE);
@@ -634,6 +637,7 @@ Local<Value> ODBC::GetOutputParameter( Parameter prm )
     case SQL_NUMERIC :
         if((int) prm.type == SQL_NUMERIC)
           DEBUG_PRINTF("NUMERIC DATA SELECTED\n");
+        [[fallthrough]];
     case SQL_BIGINT :
         if((int) prm.type == SQL_BIGINT)
           DEBUG_PRINTF("BIGINT DATA SELECTED\n");
@@ -680,6 +684,7 @@ Local<Value> ODBC::GetOutputParameter( Parameter prm )
     case SQL_DECIMAL :
         if((int) prm.type == SQL_DECIMAL)
           DEBUG_PRINTF("DECIMAL DATA SELECTED\n");
+        [[fallthrough]];
     case SQL_FLOAT :
     case SQL_REAL :
     case SQL_DOUBLE : 
@@ -908,7 +913,7 @@ void ODBC::GetStringParam(Local<Value> value, Parameter * param, int num)
     if(!param->type || (param->type == SQL_CHAR))
         param->type = (length >= 8000) ? SQL_LONGVARCHAR : SQL_VARCHAR;
     if(param->c_type != SQL_C_BINARY)
-        bufflen = string->Utf8Length( ISOLATE ) + 1;
+        bufflen = string->Utf8LengthV2( ISOLATE ) + 1;
     #endif
     if(bufflen < param->buffer_length && (param->paramtype % 2 == 0))
         bufflen = param->buffer_length;
@@ -916,7 +921,7 @@ void ODBC::GetStringParam(Local<Value> value, Parameter * param, int num)
 
     if(param->c_type == SQL_C_BINARY || param->paramtype == FILE_PARAM)
     {
-        param->buffer_length = length + 1; //null terminator added by WriteOneByte
+        param->buffer_length = length + 1; //null terminator added by WriteOneByteV2
         param->length        = length; 
     }
     param->size          = param->buffer_length;
@@ -924,14 +929,23 @@ void ODBC::GetStringParam(Local<Value> value, Parameter * param, int num)
     MEMCHECK( param->buffer );
 
     if(param->paramtype == FILE_PARAM)
-        string->WriteUtf8( ISOLATECOMMA (char *) param->buffer );
+        string->WriteUtf8V2(
+            ISOLATE,
+            (char *)param->buffer,
+            bufflen - 1
+        );
     else if(param->c_type == SQL_C_BINARY)
     {
 #if (NODE_MODULE_VERSION < NODE_0_12_MODULE_VERSION)
         memcpy(param->buffer, &string, param->buffer_length);
         //param->buffer = &string;
 #else
-        string->WriteOneByte( ISOLATECOMMA (uint8_t *)param->buffer );
+        string->WriteOneByteV2(
+            ISOLATE,
+            0,
+            string->Length(),
+            (uint8_t *)param->buffer
+        );
 #endif
     }
     else
@@ -939,7 +953,11 @@ void ODBC::GetStringParam(Local<Value> value, Parameter * param, int num)
         #ifdef UNICODE
         string->Write( ISOLATECOMMA (uint16_t *) param->buffer );
         #else
-        string->WriteUtf8( ISOLATECOMMA (char *) param->buffer );
+        string->WriteUtf8V2(
+            ISOLATE,
+            (char *)param->buffer,
+            bufflen - 1
+        );
         #endif
     }
 
@@ -1266,4 +1284,9 @@ extern "C" void init(v8::Local<Object> exports) {
   ODBCStatement::Init(exports);
 }
 
-NODE_MODULE(odbc_bindings, init)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wcast-function-type"
+NODE_MODULE_INIT() {
+    #pragma GCC diagnostic pop
+    init(exports);
+}

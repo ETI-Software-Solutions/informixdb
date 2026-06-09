@@ -1,7 +1,7 @@
 {
   "name": "@etisoftware/informixdb",
   "description": "Informix native node.js driver",
-  "version": "2.2.4",
+  "version": "2.2.5",
   "main": "lib/odbc.js",
   "homepage": "https://github.com/ETI-Software-Solutions/informixdb",
   "repository": {
@@ -36,7 +36,7 @@
   },
   "dependencies": {
     "bindings": "^1.5.0",
-    "nan": "^2.26.2",
+    "nan": "^2.27.0",
     "tar": "^7.5.13",
     "unzipper": "^0.12.3"
   },

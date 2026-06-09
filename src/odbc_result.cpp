@@ -100,9 +100,9 @@ NAN_METHOD(ODBCResult::New) {
   REQ_EXT_ARG(2, js_hstmt);
   REQ_EXT_ARG(3, js_canFreeHandle);
   
-  SQLHENV hENV = static_cast<SQLHENV>(js_henv->Value());
-  SQLHDBC hDBC = static_cast<SQLHDBC>(js_hdbc->Value());
-  SQLHSTMT hSTMT = static_cast<SQLHSTMT>(js_hstmt->Value());
+  SQLHENV hENV = static_cast<SQLHENV>(js_henv->Value(v8::kExternalPointerTypeTagDefault));
+  SQLHDBC hDBC = static_cast<SQLHDBC>(js_hdbc->Value(v8::kExternalPointerTypeTagDefault));
+  SQLHSTMT hSTMT = static_cast<SQLHSTMT>(js_hstmt->Value(v8::kExternalPointerTypeTagDefault));
   bool* canFreeHandle = static_cast<bool *>(js_canFreeHandle->Value());
   
   //create a new OBCResult object
@@ -276,7 +276,7 @@ void ODBCResult::UV_AfterFetch(uv_work_t* work_req, int status) {
 
     Nan::TryCatch try_catch;
 
-    data->cb->Call(2, info);
+    data->cb->Call(Nan::GetCurrentContext()->Global(), 2, info);
     delete data->cb;
 
     if (try_catch.HasCaught()) {
@@ -300,7 +300,7 @@ void ODBCResult::UV_AfterFetch(uv_work_t* work_req, int status) {
 
     Nan::TryCatch try_catch;
 
-    data->cb->Call(2, info);
+    data->cb->Call(Nan::GetCurrentContext()->Global(), 2, info);
     delete data->cb;
 
     if (try_catch.HasCaught()) {
@@ -555,7 +555,7 @@ void ODBCResult::UV_AfterFetchAll(uv_work_t* work_req, int status) {
 
     Nan::TryCatch try_catch;
 
-    data->cb->Call(2, info);
+    data->cb->Call(Nan::GetCurrentContext()->Global(), 2, info);
     delete data->cb;
     data->rows.Reset();
     data->objError.Reset();

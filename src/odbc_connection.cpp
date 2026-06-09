@@ -217,7 +217,11 @@ NAN_METHOD(ODBCConnection::Open) {
 #else
   data->connection = (char *) malloc(sizeof(char) * data->connectionLength);
   MEMCHECK( data->connection ) ;
-  connection->WriteUtf8(ISOLATECOMMA (char*) data->connection);
+  connection->WriteUtf8V2(
+    ISOLATE,
+    (char*)data->connection,
+    connection->Utf8LengthV2(ISOLATE)
+);
 #endif
   
   data->cb = new Nan::Callback(cb);
@@ -249,7 +253,7 @@ void ODBCConnection::UV_Open(uv_work_t* req) {
   
   uv_mutex_lock(&ODBC::g_odbcMutex); 
   
-  int timeOut = self->connectTimeout;
+  [[maybe_unused]] int timeOut = self->connectTimeout;
   
   /////////////////////////////////////////////////
   //"DRIVER={IBM INFORMIX ODBC DRIVER (64-bit)};SERVER=ids0;DATABASE=ids0db1;HOST=lxvm-l170.ibm.com;PROTOCOL=onsoctcp;SERVICE=5550;UID=informix;PWD=xyz;"
@@ -355,7 +359,7 @@ void ODBCConnection::UV_AfterOpen(uv_work_t* req, int status) {
   Nan::TryCatch try_catch;
 
   data->conn->Unref();
-  data->cb->Call(err ? 1 : 0, argv);
+  data->cb->Call(Nan::GetCurrentContext()->Global(), err ? 1 : 0, argv);
 
   if (try_catch.HasCaught()) {
     FatalException(try_catch);
@@ -422,7 +426,7 @@ NAN_METHOD(ODBCConnection::OpenSync) {
 #else
   char* connectionString = (char *) malloc(connectionLength);
   MEMCHECK( connectionString ) ;
-  connection->WriteUtf8(ISOLATECOMMA connectionString);
+  connection->WriteUtf8V2(ISOLATECOMMA connectionString, connection->Utf8LengthV2(ISOLATE) + 1, 0, nullptr);
 #endif
   uv_mutex_lock(&ODBC::g_odbcMutex);
 
@@ -448,7 +452,8 @@ NAN_METHOD(ODBCConnection::OpenSync) {
   memset((void*)ConnectionString, 0, (ConnectionLengthIn + DriverTagLen));
   memcpy((void*)ConnectionString, DriverTag, (DriverTagLen));
 
-  connection->WriteUtf8(ISOLATECOMMA (char*)((unsigned char *)ConnectionString + DriverTagLen));
+  connection->WriteUtf8V2(ISOLATECOMMA (char*)((unsigned char *)ConnectionString + DriverTagLen),
+                        connection->Utf8LengthV2(ISOLATE) + 1, 0, nullptr);
   ////////////////////////////////////////////////
   
   SetConnectionAttributes(conn);
@@ -588,7 +593,7 @@ void ODBCConnection::UV_AfterClose(uv_work_t* req, int status) {
   Nan::TryCatch try_catch;
 
   data->conn->Unref();
-  data->cb->Call(err ? 1 : 0, argv);
+  data->cb->Call(Nan::GetCurrentContext()->Global(), err ? 1 : 0, argv);
 
   if (try_catch.HasCaught()) {
     FatalException(try_catch);
@@ -970,7 +975,7 @@ void ODBCConnection::UV_AfterCreateStatement(uv_work_t* req, int status) {
 
   Nan::TryCatch try_catch;
 
-  data->cb->Call( 2, info);
+  data->cb->Call(Nan::GetCurrentContext()->Global(), 2, info);
 
   if (try_catch.HasCaught()) {
     FatalException(try_catch);
@@ -1095,11 +1100,15 @@ NAN_METHOD(ODBCConnection::Query) {
   MEMCHECK( data->sql ) ;
   sql->Write((uint16_t *) data->sql);
 #else
-  data->sqlLen = sql->Utf8Length(Isolate::GetCurrent());
-  data->sqlSize = sql->Utf8Length(Isolate::GetCurrent()) + 1;
+  data->sqlLen = sql->Utf8LengthV2(Isolate::GetCurrent());
+  data->sqlSize = sql->Utf8LengthV2(Isolate::GetCurrent()) + 1;
   data->sql = (char *) malloc(data->sqlSize);
   MEMCHECK( data->sql ) ;
-  sql->WriteUtf8(ISOLATECOMMA (char *) data->sql);
+  sql->WriteUtf8V2(
+    ISOLATE,
+    (char*)data->sql,
+    sql->Utf8LengthV2(ISOLATE)
+);
 #endif
 
   DEBUG_PRINTF("ODBCConnection::Query : sqlLen=%i, sqlSize=%i, sql=%s, hDBC=%X\n",
@@ -1201,7 +1210,7 @@ void ODBCConnection::UV_AfterQuery(uv_work_t* req, int status) {
     if(outParamCount) info[1] = sp_result;
     else info[1] = Nan::Null();
     
-    data->cb->Call(2, info);
+    data->cb->Call(Nan::GetCurrentContext()->Global(), 2, info);
   }
   else {
     Local<Value> info[4];
@@ -1224,7 +1233,7 @@ void ODBCConnection::UV_AfterQuery(uv_work_t* req, int status) {
     if(outParamCount) info[2] = sp_result; // Must a CALL stmt
     else info[2] = Nan::Null();
     
-    data->cb->Call(3, info);
+    Nan::Call(*data->cb, Nan::GetCurrentContext()->Global(), 3, info);
   }
   
   data->conn->Unref();
@@ -1503,7 +1512,7 @@ NAN_METHOD(ODBCConnection::Tables) {
 #else
     data->catalog = (char *) malloc(catalog->Length() + 1);
     MEMCHECK( data->catalog ) ;
-    catalog->WriteUtf8(ISOLATECOMMA (char *) data->catalog);
+    catalog->WriteUtf8V2(ISOLATECOMMA (char *) data->catalog, sizeof(data->catalog), 0, nullptr);
 #endif
   }
 
@@ -1515,7 +1524,7 @@ NAN_METHOD(ODBCConnection::Tables) {
 #else
     data->schema = (char *) malloc(schema->Length() + 1);
     MEMCHECK( data->schema ) ;
-    schema->WriteUtf8(ISOLATECOMMA (char *) data->schema);
+    schema->WriteUtf8V2(ISOLATECOMMA  (char *) data->schema,  sizeof(data->schema),  0, nullptr);
 #endif
   }
   
@@ -1527,7 +1536,7 @@ NAN_METHOD(ODBCConnection::Tables) {
 #else
     data->table = (char *) malloc(table->Length() + 1);
     MEMCHECK( data->table ) ;
-    table->WriteUtf8(ISOLATECOMMA (char *) data->table);
+    table->WriteUtf8V2(ISOLATECOMMA   (char *) data->table,   sizeof(data->table),   0, nullptr);
 #endif
   }
   
@@ -1539,7 +1548,7 @@ NAN_METHOD(ODBCConnection::Tables) {
 #else
     data->type = (char *) malloc(type->Length() + 1);
     MEMCHECK( data->type ) ;
-    type->WriteUtf8(ISOLATECOMMA (char *) data->type);
+    type->WriteUtf8V2(ISOLATECOMMA    (char *) data->type,    sizeof(data->type),    0, nullptr);
 #endif
   }
   
@@ -1619,7 +1628,7 @@ NAN_METHOD(ODBCConnection::Columns) {
 #else
     data->catalog = (char *) malloc(catalog->Length() + 1);
     MEMCHECK( data->catalog ) ;
-    catalog->WriteUtf8(ISOLATECOMMA (char *) data->catalog);
+    catalog->WriteUtf8V2(ISOLATECOMMA (char *) data->catalog, sizeof(data->catalog), 0, nullptr);
 #endif
   }
 
@@ -1631,7 +1640,7 @@ NAN_METHOD(ODBCConnection::Columns) {
 #else
     data->schema = (char *) malloc(schema->Length() + 1);
     MEMCHECK( data->schema ) ;
-    schema->WriteUtf8(ISOLATECOMMA (char *) data->schema);
+    schema->WriteUtf8V2(ISOLATECOMMA  (char *) data->schema,  sizeof(data->schema),  0, nullptr);
 #endif
   }
   
@@ -1643,7 +1652,7 @@ NAN_METHOD(ODBCConnection::Columns) {
 #else
     data->table = (char *) malloc(table->Length() + 1);
     MEMCHECK( data->table ) ;
-    table->WriteUtf8(ISOLATECOMMA (char *) data->table);
+    table->WriteUtf8V2(ISOLATECOMMA   (char *) data->table,   sizeof(data->table),   0, nullptr);
 #endif
   }
   
@@ -1655,7 +1664,7 @@ NAN_METHOD(ODBCConnection::Columns) {
 #else
     data->column = (char *) malloc(column->Length() + 1);
     MEMCHECK( data->column ) ;
-    column->WriteUtf8(ISOLATECOMMA (char *) data->column);
+    column->WriteUtf8V2(ISOLATECOMMA    (char *) data->column,    sizeof(data->column),    0, nullptr);
 #endif
   }
   
@@ -1808,7 +1817,7 @@ void ODBCConnection::UV_AfterBeginTransaction(uv_work_t* req, int status) {
 
   Nan::TryCatch try_catch;
 
-  data->cb->Call( err ? 1 : 0, argv);
+  data->cb->Call(Nan::GetCurrentContext()->Global(), err ? 1 : 0, argv);
 
   if (try_catch.HasCaught()) {
     FatalException(try_catch);
@@ -1989,7 +1998,7 @@ void ODBCConnection::UV_AfterEndTransaction(uv_work_t* req, int status) {
 
   Nan::TryCatch try_catch;
 
-  data->cb->Call(err ? 1 : 0, argv);
+  data->cb->Call(Nan::GetCurrentContext()->Global(), err ? 1 : 0, argv);
 
   if (try_catch.HasCaught()) {
     FatalException(try_catch);

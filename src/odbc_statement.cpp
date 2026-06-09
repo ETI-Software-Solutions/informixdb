@@ -108,9 +108,9 @@ NAN_METHOD(ODBCStatement::New) {
   REQ_EXT_ARG(1, js_hdbc);
   REQ_EXT_ARG(2, js_hstmt);
   
-  SQLHENV hENV = static_cast<SQLHENV>(js_henv->Value());
-  SQLHDBC hDBC = static_cast<SQLHDBC>(js_hdbc->Value());
-  SQLHSTMT hSTMT = static_cast<SQLHSTMT>(js_hstmt->Value());
+  SQLHENV hENV = static_cast<SQLHENV>(js_henv->Value(v8::kExternalPointerTypeTagDefault));
+  SQLHDBC hDBC = static_cast<SQLHDBC>(js_hdbc->Value(v8::kExternalPointerTypeTagDefault));
+  SQLHSTMT hSTMT = static_cast<SQLHSTMT>(js_hstmt->Value(v8::kExternalPointerTypeTagDefault));
   
   //create a new OBCResult object
   ODBCStatement* stmt = new ODBCStatement(hENV, hDBC, hSTMT);
@@ -233,7 +233,7 @@ void ODBCStatement::UV_AfterExecute(uv_work_t* req, int status) {
 
     Nan::TryCatch try_catch;
 
-    data->cb->Call(3, info);
+    Nan::Call(*data->cb, Nan::GetCurrentContext()->Global(), 3, info);
 
     if (try_catch.HasCaught()) {
       FatalException(try_catch);
@@ -479,7 +479,11 @@ NAN_METHOD(ODBCStatement::ExecuteDirect) {
 #else
   data->sql = (char *) malloc(data->sqlLen +1);
   MEMCHECK( data->sql );
-  sql->WriteUtf8(ISOLATECOMMA (char *) data->sql);
+  sql->WriteUtf8V2(
+    ISOLATE,
+    (char*)data->sql,
+    sql->Utf8LengthV2(ISOLATE)
+);
 #endif
 
   data->stmt = stmt;
@@ -546,7 +550,7 @@ void ODBCStatement::UV_AfterExecuteDirect(uv_work_t* req, int status) {
 
     Nan::TryCatch try_catch;
 
-    data->cb->Call(2, info);
+    data->cb->Call(Nan::GetCurrentContext()->Global(), 2, info);
 
     if (try_catch.HasCaught()) {
       FatalException(try_catch);
@@ -638,7 +642,7 @@ NAN_METHOD(ODBCStatement::PrepareSync) {
   char *sql2;
   sql2 = (char *) malloc(sqlLen);
   MEMCHECK( sql2 );
-  sql->WriteUtf8(ISOLATECOMMA sql2);
+  sql->WriteUtf8V2(ISOLATECOMMA sql2, sql->Utf8LengthV2(Isolate::GetCurrent()) + 1, 0, nullptr);
 #endif
   
   ret = SQLPrepare(
@@ -693,7 +697,11 @@ NAN_METHOD(ODBCStatement::Prepare) {
 #else
   data->sql = (char *) malloc(data->sqlLen +1);
   MEMCHECK( data->sql );
-  sql->WriteUtf8(ISOLATECOMMA (char *) data->sql);
+  sql->WriteUtf8V2(
+    ISOLATE,
+    (char*)data->sql,
+    sql->Utf8LengthV2(ISOLATE)
+);
 #endif
   
   data->stmt = stmt;
@@ -760,7 +768,7 @@ void ODBCStatement::UV_AfterPrepare(uv_work_t* req, int status) {
 
     Nan::TryCatch try_catch;
 
-    data->cb->Call( 2, info);
+    data->cb->Call(Nan::GetCurrentContext()->Global(), 2, info);
 
     if (try_catch.HasCaught()) {
       FatalException(try_catch);
@@ -924,7 +932,7 @@ void ODBCStatement::UV_AfterBind(uv_work_t* req, int status) {
 
     Nan::TryCatch try_catch;
 
-    data->cb->Call( 2, info);
+    data->cb->Call(Nan::GetCurrentContext()->Global(), 2, info);
 
     if (try_catch.HasCaught()) {
       FatalException(try_catch);

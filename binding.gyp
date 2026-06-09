@@ -33,7 +33,7 @@
             [
               '<!@(echo $CSDK_HOME)/incl/cli'
             ],
-            'cflags' : ['-g'],
+            'cflags' : ['-g', '-Wno-deprecated-declarations', '-Wno-attributes'],
           }
         ],
 
@@ -50,7 +50,7 @@
             [
               '<!@(echo $CSDK_HOME)/incl/cli'
             ],
-            'cflags' : ['-g'],
+            'cflags' : ['-g', '-Wno-deprecated-declarations', '-Wno-attributes'],
           }
         ],
 
@@ -67,7 +67,7 @@
             [
               '<!@(echo $CSDK_HOME)/incl/cli'
             ],
-            'cflags' : ['-g', '-m64'],
+            'cflags' : ['-g', '-Wno-deprecated-declarations', '-Wno-attributes', '-m64'],
           }
         ],
 
@@ -83,7 +83,7 @@
             [
               '<!@(echo $CSDK_HOME)/incl/cli'
             ],
-            'cflags' : ['-g']
+            'cflags' : ['-g', '-Wno-deprecated-declarations', '-Wno-attributes']
           }
         ],
 
@@ -127,7 +127,7 @@
             [
               '<!@(echo $CSDK_HOME)/incl/cli'
             ],
-            'cflags' : ['-g']
+            'cflags' : ['-g', '-Wno-deprecated-declarations', '-Wno-attributes']
           }
         ], 
 
@@ -143,7 +143,7 @@
             [
               '<!@(echo $CSDK_HOME)/incl/cli'
             ],
-            'cflags' : ['-g']
+            'cflags' : ['-g', '-Wno-deprecated-declarations', '-Wno-attributes']
           }
         ]
 
